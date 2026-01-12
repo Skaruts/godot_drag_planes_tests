@@ -1,0 +1,71 @@
+[gd_scene load_steps=13 format=3 uid="uid://bb2otij1oakf1"]
+
+[ext_resource type="Script" uid="uid://chnsh07fpevf7" path="res://scenes/equation/using_plane_equation.gd" id="1_i0lay"]
+[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="2_rggox"]
+[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="3_rbwwj"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_h2yge"]
+sky_material = SubResource("ProceduralSkyMaterial_0xm2m")
+
+[sub_resource type="Environment" id="Environment_1bvp3"]
+background_mode = 2
+sky = SubResource("Sky_h2yge")
+tonemap_mode = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0xm2m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+transparency = 1
+albedo_color = Color(0, 0.333, 1, 0.5)
+
+[sub_resource type="SphereMesh" id="SphereMesh_1bvp3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sugp2"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_jyhfs"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyhfs"]
+albedo_texture = ExtResource("3_rbwwj")
+uv1_triplanar = true
+
+[node name="using_plane_equation" type="Node3D"]
+script = ExtResource("1_i0lay")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 3.83803, 3.10496, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1bvp3")
+
+[node name="blue_ball" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="blue_ball"]
+shape = SubResource("SphereShape3D_0xm2m")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="blue_ball"]
+material_override = SubResource("StandardMaterial3D_h2yge")
+mesh = SubResource("SphereMesh_1bvp3")
+
+[node name="red_ball" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+material_override = SubResource("StandardMaterial3D_sugp2")
+mesh = SubResource("SphereMesh_jyhfs")
+skeleton = NodePath("")
+
+[node name="FlyCamera" type="CharacterBody3D" parent="."]
+transform = Transform3D(0.815149, -0.349795, 0.46171, 0, 0.79708, 0.603873, -0.579252, -0.492246, 0.649739, 3.22927, 3.8893, 4.41421)
+script = ExtResource("2_rggox")
+metadata/_custom_type_script = "uid://cte4jalives85"
+
+[node name="ground" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+material_override = SubResource("StandardMaterial3D_jyhfs")
+size = Vector3(30, 1, 30)

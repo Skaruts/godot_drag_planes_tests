@@ -1,0 +1,162 @@
+[gd_scene load_steps=3 format=3 uid="uid://psod5manqcqr"]
+
+[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="1_gfx43"]
+[ext_resource type="PackedScene" uid="uid://cd4tap5v5178" path="res://scenes/shape/using_plane_shape.tscn" id="1_hjvpm"]
+
+[node name="shape_with_ui" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "foo"
+
+[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "foo"
+
+[node name="Button3" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "foo"
+
+[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "foo"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button3" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button5" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button6" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button7" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button3" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="Button5" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_gfx43")
+expand_icon = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer"]
+layout_mode = 2
+stretch = true
+metadata/_tab_index = 0
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer"]
+handle_input_locally = false
+physics_object_picking = true
+physics_object_picking_sort = true
+size = Vector2i(804, 612)
+render_target_update_mode = 4
+
+[node name="using_plane_shape" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer/SubViewport" instance=ExtResource("1_hjvpm")]
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer/SubViewport/using_plane_shape"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "sdkpsdjkpskd"
+
+[node name="TabContainer2" type="TabContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+tabs_visible = false
