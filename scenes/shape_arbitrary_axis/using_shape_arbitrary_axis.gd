@@ -36,12 +36,14 @@ func _on_ball_input_event(camera:Node, event:InputEvent, event_position:Vector3,
 
 		if debugging: debug_dt.clear()
 
-		if false:
+		if true:
 			# test dragging on a single axis
-			var line_dir := ball.global_position+ball.basis.x*100
+			var axis := ball.basis.x
 			if debugging:
+				var line_dir := ball.global_position+axis*100
 				debug_dt.draw_line(-line_dir, line_dir, Color.AZURE, 1)
-			drag_plane.start_dragging(ball.global_position, ball.basis.x)
+			drag_plane.start_dragging(ball.global_position, axis)
+
 		else:
 			# test dragging on two axes
 			var axis1 := ball.basis.x
