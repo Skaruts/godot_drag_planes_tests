@@ -27,7 +27,6 @@ shadow_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="ball" type="StaticBody3D" parent="."]
-transform = Transform3D(0.841351, 0.284084, 0.45981, -1.49012e-08, 0.850729, -0.525605, -0.54049, 0.442218, 0.715761, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ball"]
 shape = SubResource("SphereShape3D_6hr38")
