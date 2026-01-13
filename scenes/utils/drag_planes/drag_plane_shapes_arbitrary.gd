@@ -90,7 +90,7 @@ func _adjust_facing() -> void:
 	if _axis1 == Vector3.ZERO: return
 
 	var camera: Camera3D = get_viewport().get_camera_3d()
-	var cam_pos:Vector3 = camera.owner.global_position
+	var cam_pos:Vector3 = camera.global_position
 
 	var a := cam_pos
 	var b := _collider.global_position
