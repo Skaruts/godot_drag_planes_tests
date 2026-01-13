@@ -94,9 +94,9 @@ func _adjust_facing() -> void:
 
 	var a := cam_pos
 	var b := _collider.global_position
-	var d := _axis1
 
 	if _axis2 == Vector3.ZERO or _axis2 == _axis1:
+		var d := _axis1
 		var c := a + ( (b-a).dot(d) / (pow(d.length(), 2))  ) * d
 		var up_vec := Vector3.UP if b.direction_to(c) != Vector3.UP else Vector3.RIGHT  # is this ok?
 		_collider.look_at(c, up_vec)
