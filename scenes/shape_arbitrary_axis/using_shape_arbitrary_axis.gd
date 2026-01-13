@@ -32,9 +32,10 @@ func _ready() -> void:
 func _on_ball_input_event(camera:Node, event:InputEvent, event_position:Vector3, click_normal:Vector3, shape_idx:int) -> void:
 	if not event is InputEventMouseButton: return
 	if event.pressed:
-		ball.input_ray_pickable = false
-
 		if debugging: debug_dt.clear()
+
+		# turn off input events on the dragged obejct while it's being dragged
+		ball.input_ray_pickable = false
 
 		if true:
 			# test dragging on a single axis
@@ -53,7 +54,7 @@ func _on_ball_input_event(camera:Node, event:InputEvent, event_position:Vector3,
 
 func _on_drag_plane_input_event(camera:Node, event:InputEvent, event_position:Vector3, click_normal:Vector3, shape_idx:int) -> void:
 	if event is InputEventMouseButton and not event.pressed:
-		drag_plane.stop_dragging()
 		ball.input_ray_pickable = true
+		drag_plane.stop_dragging()
 	elif event is InputEventMouseMotion:
-		drag_plane.set_target_position(ball)
+		ball.global_position = drag_plane.get_drag_position()

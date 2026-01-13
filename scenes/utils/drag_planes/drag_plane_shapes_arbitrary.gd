@@ -33,34 +33,37 @@ extends StaticBody3D
 ## [br][br]
 ##
 ## A helper node for detecting mouse dragging of 3D objects, to allow moving
-## them in one or more axes.
+## them along one or two axes.
 ## [br][br]
 ##
 
-## The axes that an object can be dragged on.
-#static var Axis : Dictionary[String, Vector3] = {
-	#X = Vector3(1,0,0),
-	#Y = Vector3(0,1,0),
-	#Z = Vector3(0,0,1),
-	#XY = Vector3(1,1,0),
-	#YZ = Vector3(0,1,1),
-	#ZX = Vector3(1,0,1),
-#}
+## Will be true while dragging mode is active.
+## [br][br]
+## This property is read-only.
+var is_dragging  : bool = false:
+	set(__): pass
 
 ## The point where the mouse raycast intersected the plane.
-var intersection : Vector3
+## [br][br]
+## This property is read-only.
+var intersection := Vector3.ZERO:
+	set(__): pass
 
 
-var _target   : Node3D
-var _axis1: Vector3
-var _axis2: Vector3
-var _collider : CollisionShape3D
+var _axis1      : Vector3
+var _axis2      : Vector3
+var _collider   : CollisionShape3D
+var _target_pos : Vector3
 
-#var dt: DrawTool3D
+var _debugging := false
+var _dt: DrawTool3D
+
 
 func _ready() -> void:
-	#dt = DrawTool3D.new()
-	#add_child(dt)
+	if _debugging:
+		_dt = DrawTool3D.new()
+		add_child(_dt)
+
 	_collider = CollisionShape3D.new()
 	_collider.shape = WorldBoundaryShape3D.new()
 	_collider.shape.plane = -Plane.PLANE_XY
@@ -72,10 +75,9 @@ func _ready() -> void:
 func _input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	intersection = event_position
 	_adjust_facing()
-	if _target:
-		set_target_position(_target)
 
 
+#NOTE: uncommented only for debugging purposes
 #func _process(delta: float) -> void:
 	#_adjust_facing()
 
@@ -86,14 +88,14 @@ func _set_axis(axis1: Vector3, axis2 := Vector3.ZERO) -> void:
 
 
 func _adjust_facing() -> void:
-	#dt.clear()
+	if _debugging: _dt.clear()
 	if _axis1 == Vector3.ZERO: return
 
 	var camera: Camera3D = get_viewport().get_camera_3d()
 	var cam_pos:Vector3 = camera.global_position
 
 	var a := cam_pos
-	var b := _collider.global_position
+	var b := _target_pos
 
 	if _axis2 == Vector3.ZERO or _axis2 == _axis1:
 		var d := _axis1
@@ -102,11 +104,11 @@ func _adjust_facing() -> void:
 		_collider.look_at(c, up_vec)
 	else:
 		var cross := _axis1.cross(_axis2)
-		var c := _collider.global_position+cross
+		var c := _target_pos+cross
 
 		if b.direction_to(c).dot(b.direction_to(a)) < 0:
 			cross = _axis2.cross(_axis1)
-			c = _collider.global_position+cross
+			c = _target_pos+cross
 
 		var up_vec := Vector3.UP if cross != Vector3.UP else Vector3.RIGHT  # is this ok?
 		_collider.look_at(c, up_vec)
@@ -118,41 +120,34 @@ func _adjust_facing() -> void:
 #		Public API
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-## Initializes dragging mode based on [param position_], along the [param axis] axis.
+## Initializes dragging mode based on [param target_position]. If [param axis2]
+## is ommited, dragging will be calculated along [param axis1], otherwise it
+## will be calculated on the ([param axis1], [param axis2]) plane.
 ## [br][br]
-## The [param position_] must be in global space.
-func start_dragging(position_: Vector3, axis1: Vector3, axis2 := Vector3.ZERO) -> void:
+## The parameter [param target_position] must be in global space.
+func start_dragging(target_position: Vector3, axis1: Vector3, axis2 := Vector3.ZERO) -> void:
 	input_ray_pickable = true
+	is_dragging = true
+	_target_pos = target_position
 	_collider.transform.basis = Basis()
-	_collider.global_position = position_
+	_collider.global_position = target_position
 	_set_axis(axis1, axis2)
 	_adjust_facing()
 
 
-## Initializes dragging based on the [param node] node, along
-## the [param axis] axis.
-## [br][br]
-## This allows for automatic updating of the node's position while dragging.
-func start_dragging_node(node: Node3D, axis1: Vector3, axis2 := Vector3.ZERO) -> void:
-	_target = node
-	start_dragging(_target.global_position, axis1, axis2)
-
-
 ## Ends dragging mode.
 func stop_dragging() -> void:
+	is_dragging = false
 	input_ray_pickable = false
-	_target = null
 
 
-## Sets the correct position on the [param node] dragged object. If you need
-## more control over how this is applied, you can access the 'intersection'
-## property directly instead.
-func set_target_position(node: Node3D) -> void:
+## Returns the position where the object at [param position] is being dragged to.
+func get_target_position() -> Vector3:
 	if _axis2 == Vector3.ZERO or _axis2 == _axis1:
-		var a := node.global_position
+		var a := _target_pos
 		var b := intersection
 		var d := _axis1
 		var c := a + ( (b-a).dot(d) / (pow(d.length(), 2))  ) * d
-		node.global_position = c
+		return c
 	else:
-		node.global_position = intersection
+		return intersection
