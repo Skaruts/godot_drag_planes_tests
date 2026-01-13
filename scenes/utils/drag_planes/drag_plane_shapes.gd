@@ -94,13 +94,12 @@ func _adjust_facing() -> void:
 # PLANE_XY = Plane( 0, 0, 1, 0 ) -- A plane that extends in XY axes (normal vector points +Z).
 # -----------------
 func _set_axis(axis: int) -> void:
-	if axis != _axis:
-		_axis = axis
-		match axis:
-			Axis.X, Axis.Z, Axis.XY: _collider.shape.plane = -Plane.PLANE_XY
-			Axis.Y:                  _collider.shape.plane = Plane.PLANE_XY
-			Axis.YZ:                 _collider.shape.plane = Plane.PLANE_YZ
-			Axis.ZX:                 _collider.shape.plane = Plane.PLANE_XZ
+	_axis = axis
+	match axis:
+		Axis.X, Axis.Z, Axis.XY: _collider.shape.plane = -Plane.PLANE_XY
+		Axis.Y:                  _collider.shape.plane = Plane.PLANE_XY
+		Axis.YZ:                 _collider.shape.plane = Plane.PLANE_YZ
+		Axis.ZX:                 _collider.shape.plane = Plane.PLANE_XZ
 
 
 
