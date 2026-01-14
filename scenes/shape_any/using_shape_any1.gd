@@ -1,7 +1,7 @@
 extends Node3D
 
 
-@onready var drag_plane: DragPlaneShapeArbitrary = $DragPlaneShapeArbitrary
+@onready var drag_plane: DragPlaneShape_Any = $DragPlaneShape_Any
 @onready var ball: StaticBody3D = $ball
 
 @onready var debug_dt := DrawTool3D.new()

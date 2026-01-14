@@ -25,7 +25,7 @@
 #         DragPlane        (version 6)
 #
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-class_name DragPlaneArbitrary
+class_name DragPlaneEquation_Any
 extends Node3D
 
 ##
@@ -56,18 +56,18 @@ var _axis2      : Vector3
 var _plane      : Plane
 var _target_pos : Vector3
 
-var _debugging := false
+var _debugging := true
 var _dt: DrawTool3D
 
 
 func _ready() -> void:
-	name = "DragPlane"
 	if _debugging:
 		_dt = DrawTool3D.new()
 		add_child(_dt)
 
 
 func _calculate_plane() -> void:
+
 	if _debugging: _dt.clear()
 	if _axis1 == Vector3.ZERO: return
 
@@ -82,6 +82,7 @@ func _calculate_plane() -> void:
 		var d := _axis1
 		var c := a + ( (b-a).dot(d) / (pow(d.length(), 2))  ) * d
 		direction = _target_pos.direction_to(c)
+		_plane = Plane(direction, _target_pos)
 	else:
 		var cross := _axis1.cross(_axis2)
 		var c := _target_pos + cross
@@ -93,9 +94,7 @@ func _calculate_plane() -> void:
 			#c = _target_pos + cross
 
 		direction = _target_pos.direction_to(c)
-
-	_plane = Plane(direction, _target_pos)
-
+		_plane = Plane(direction, _target_pos)
 	if _debugging:
 		_dt.draw_sphere(_target_pos, Color.RED, 0.2)
 		_dt.draw_line(_target_pos, _target_pos + _plane.normal*2, Color.RED, 3)
@@ -144,6 +143,8 @@ func get_drag_position() -> Vector3:
 		var b := intersection
 		var d := _axis1
 		var c := a + ( (b-a).dot(d) / (pow(d.length(), 2))  ) * d
+		print(c)
 		return c
 	else:
+		print(intersection)
 		return intersection

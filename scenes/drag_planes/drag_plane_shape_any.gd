@@ -25,7 +25,7 @@
 #         DragPlaneShape        (version 18)
 #
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-class_name DragPlaneShapeArbitrary
+class_name DragPlaneShape_Any
 extends StaticBody3D
 
 ##
@@ -95,7 +95,7 @@ func _adjust_facing() -> void:
 	var cam_pos:Vector3 = camera.global_position
 
 	var a := cam_pos
-	var b := _target_pos
+	var b := _collider.global_position
 
 	if _axis2 == Vector3.ZERO or _axis2 == _axis1:
 		var d := _axis1
@@ -104,11 +104,11 @@ func _adjust_facing() -> void:
 		_collider.look_at(c, up_vec)
 	else:
 		var cross := _axis1.cross(_axis2)
-		var c := _target_pos+cross
+		var c := _collider.global_position+cross
 
 		if b.direction_to(c).dot(b.direction_to(a)) < 0:
 			cross = _axis2.cross(_axis1)
-			c = _target_pos+cross
+			c = _collider.global_position+cross
 
 		var up_vec := Vector3.UP if cross != Vector3.UP else Vector3.RIGHT  # is this ok?
 		_collider.look_at(c, up_vec)
@@ -142,7 +142,7 @@ func stop_dragging() -> void:
 
 
 ## Returns the position where the object at [param position] is being dragged to.
-func get_target_position() -> Vector3:
+func get_drag_position() -> Vector3:
 	if _axis2 == Vector3.ZERO or _axis2 == _axis1:
 		var a := _target_pos
 		var b := intersection

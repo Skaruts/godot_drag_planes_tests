@@ -1,7 +1,7 @@
 extends Node3D
 
 
-@onready var drag_plane: DragPlaneArbitrary = $DragPlaneArbitrary
+@onready var drag_plane: DragPlaneEquation_Any = $DragPlaneEquation_Any
 @onready var ball: StaticBody3D = $ball
 
 @onready var dt := DrawTool3D.new()
@@ -9,7 +9,6 @@ extends Node3D
 
 func _ready() -> void:
 	ball.input_event.connect(_on_ball_input_event)
-	add_child(drag_plane)
 	add_child(dt)
 	dt.draw_line(Vector3(-100, 0, 0), Vector3(100, 0, 0), Color.RED)
 	dt.draw_line(Vector3(0, -100, 0), Vector3(0, 100, 0), Color.GREEN)
@@ -42,5 +41,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		drag_plane.stop_dragging()
 		ball.input_ray_pickable = true
 	elif event is InputEventMouseMotion:
+		printt(drag_plane.is_dragging)
 		if drag_plane.is_dragging:
 			ball.global_position = drag_plane.get_drag_position()

@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://bqbup8iujop0s"]
+[gd_scene load_steps=9 format=3 uid="uid://dl66ym3q40yvd"]
 
-[ext_resource type="Script" uid="uid://bdxxsviwxoqcw" path="res://scenes/shape_arbitrary_axis/using_shape_arbitrary_axis.gd" id="1_1qk5b"]
-[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="2_8j17l"]
-[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="3_u2hyi"]
-[ext_resource type="Script" uid="uid://vcxq52j8pw44" path="res://scenes/utils/drag_planes/drag_plane_shapes_arbitrary.gd" id="4_2aexs"]
+[ext_resource type="Script" uid="uid://c263urjqmqf7a" path="res://scenes/shape_any/using_shape_any1.gd" id="1_3dt6q"]
+[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="1_tyk1j"]
+[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="2_43cyg"]
+[ext_resource type="Script" uid="uid://vcxq52j8pw44" path="res://scenes/utils/drag_planes/drag_plane_shape_any.gd" id="4_ylifx"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_6hr38"]
 
@@ -14,11 +14,11 @@ albedo_color = Color(0, 0.333, 1, 0.5)
 [sub_resource type="SphereMesh" id="SphereMesh_4u7ep"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jt6iw"]
-albedo_texture = ExtResource("3_u2hyi")
+albedo_texture = ExtResource("2_43cyg")
 uv1_triplanar = true
 
-[node name="using_shape_arbitrary_axis" type="Node3D"]
-script = ExtResource("1_1qk5b")
+[node name="using_shape_any" type="Node3D"]
+script = ExtResource("1_3dt6q")
 metadata/_edit_lock_ = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -37,7 +37,7 @@ mesh = SubResource("SphereMesh_4u7ep")
 
 [node name="FlyCamera" type="CharacterBody3D" parent="."]
 transform = Transform3D(0.815149, -0.349795, 0.46171, 0, 0.79708, 0.603873, -0.579252, -0.492246, 0.649739, 3.22927, 3.8893, 4.41421)
-script = ExtResource("2_8j17l")
+script = ExtResource("1_tyk1j")
 metadata/_custom_type_script = "uid://cte4jalives85"
 metadata/_edit_lock_ = true
 
@@ -48,7 +48,6 @@ material_override = SubResource("StandardMaterial3D_jt6iw")
 size = Vector3(30, 1, 30)
 metadata/_edit_lock_ = true
 
-[node name="DragPlaneShapeArbitrary" type="StaticBody3D" parent="."]
-script = ExtResource("4_2aexs")
+[node name="DragPlaneShape_Any" type="StaticBody3D" parent="."]
+script = ExtResource("4_ylifx")
 metadata/_custom_type_script = "uid://vcxq52j8pw44"
-metadata/_edit_lock_ = true

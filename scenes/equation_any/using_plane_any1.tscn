@@ -1,21 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://to655xah32le"]
+[gd_scene load_steps=9 format=3 uid="uid://8nbmp5b6jdfq"]
 
-[ext_resource type="Script" uid="uid://bb6webgfjqhdr" path="res://scenes/equation_arbitrary_axis/using_plane_arbitrary_axis.gd" id="1_f74ii"]
-[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="2_dmvgc"]
-[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="3_u55ca"]
-[ext_resource type="Script" uid="uid://bjg8f7qermd6n" path="res://scenes/utils/drag_planes/drag_plane_equation_arbitrary.gd" id="4_2dala"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
-sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-
-[sub_resource type="Sky" id="Sky_h2yge"]
-sky_material = SubResource("ProceduralSkyMaterial_0xm2m")
-
-[sub_resource type="Environment" id="Environment_1bvp3"]
-background_mode = 2
-sky = SubResource("Sky_h2yge")
-tonemap_mode = 2
+[ext_resource type="Script" uid="uid://dqwixypkfdtdx" path="res://scenes/equation_any/using_plane_any1.gd" id="1_25fsb"]
+[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="1_rl65r"]
+[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="2_68itu"]
+[ext_resource type="Script" uid="uid://bjg8f7qermd6n" path="res://scenes/utils/drag_planes/drag_plane_equation_arbitrary.gd" id="4_ktdj4"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_0xm2m"]
 
@@ -26,18 +14,15 @@ albedo_color = Color(0, 0.333, 1, 0.5)
 [sub_resource type="SphereMesh" id="SphereMesh_1bvp3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyhfs"]
-albedo_texture = ExtResource("3_u55ca")
+albedo_texture = ExtResource("2_68itu")
 uv1_triplanar = true
 
-[node name="using_plane_any_axis" type="Node3D"]
-script = ExtResource("1_f74ii")
+[node name="using_plane_any" type="Node3D"]
+script = ExtResource("1_25fsb")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 3.83803, 3.10496, 0)
 shadow_enabled = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_1bvp3")
 
 [node name="ball" type="StaticBody3D" parent="."]
 
@@ -50,7 +35,7 @@ mesh = SubResource("SphereMesh_1bvp3")
 
 [node name="FlyCamera" type="CharacterBody3D" parent="."]
 transform = Transform3D(0.815149, -0.349795, 0.46171, 0, 0.79708, 0.603873, -0.579252, -0.492246, 0.649739, 3.22927, 3.8893, 4.41421)
-script = ExtResource("2_dmvgc")
+script = ExtResource("1_rl65r")
 metadata/_custom_type_script = "uid://cte4jalives85"
 
 [node name="ground" type="CSGBox3D" parent="."]
@@ -59,6 +44,6 @@ visible = false
 material_override = SubResource("StandardMaterial3D_jyhfs")
 size = Vector3(30, 1, 30)
 
-[node name="DragPlaneArbitrary" type="Node3D" parent="."]
-script = ExtResource("4_2dala")
+[node name="DragPlaneEquation_Any" type="Node3D" parent="."]
+script = ExtResource("4_ktdj4")
 metadata/_custom_type_script = "uid://bjg8f7qermd6n"
