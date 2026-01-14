@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://c07a5qqrxa4r"]
+[gd_scene load_steps=3 format=3 uid="uid://c07a5qqrxa4r"]
 
 [ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="1_gibdt"]
+[ext_resource type="PackedScene" uid="uid://dl66ym3q40yvd" path="res://scenes/shape/using_shape.tscn" id="2_gibdt"]
 
-[node name="shape_any_with_ui" type="Panel"]
+[node name="shape_with_ui" type="Panel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -148,7 +149,9 @@ physics_object_picking_sort = true
 size = Vector2i(804, 612)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer/SubViewport"]
+[node name="using_shape" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer/SubViewport" instance=ExtResource("2_gibdt")]
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/HSplitContainer/TabContainer/SubViewportContainer/SubViewport/using_shape"]
 offset_right = 106.0
 offset_bottom = 23.0
 text = "sdkpsdjkpskd"

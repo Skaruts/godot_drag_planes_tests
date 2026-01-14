@@ -1,14 +1,14 @@
 extends Node3D
 
 
-@onready var drag_plane: DragPlaneShape_Any = $DragPlaneShape_Any
+@onready var drag_plane: DragPlaneShape = $DragPlaneShape
 @onready var ball: StaticBody3D = $ball
 
 @onready var debug_dt := DrawTool3D.new()
 @onready var origin_dt := DrawTool3D.new()
 @onready var ball_dt := DrawTool3D.new()
 
-var debugging := false
+var debugging := true
 
 
 func _ready() -> void:

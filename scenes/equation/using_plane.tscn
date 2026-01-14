@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://8nbmp5b6jdfq"]
 
-[ext_resource type="Script" uid="uid://dqwixypkfdtdx" path="res://scenes/equation_any/using_plane_any1.gd" id="1_25fsb"]
-[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="1_rl65r"]
-[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="2_68itu"]
-[ext_resource type="Script" uid="uid://bjg8f7qermd6n" path="res://scenes/utils/drag_planes/drag_plane_equation_arbitrary.gd" id="4_ktdj4"]
+[ext_resource type="Script" uid="uid://dqwixypkfdtdx" path="res://scenes/equation/using_plane.gd" id="1_v8ofy"]
+[ext_resource type="Script" uid="uid://cte4jalives85" path="res://addons/sk_fly_camera/src/fly_camera.gd" id="2_p3pvw"]
+[ext_resource type="Texture2D" uid="uid://86yqmx5utvjf" path="res://icon.svg" id="3_7annp"]
+[ext_resource type="Script" uid="uid://bjg8f7qermd6n" path="res://scenes/drag_planes/drag_plane_equation.gd" id="4_tj0mo"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_0xm2m"]
 
@@ -14,11 +14,11 @@ albedo_color = Color(0, 0.333, 1, 0.5)
 [sub_resource type="SphereMesh" id="SphereMesh_1bvp3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyhfs"]
-albedo_texture = ExtResource("2_68itu")
+albedo_texture = ExtResource("3_7annp")
 uv1_triplanar = true
 
-[node name="using_plane_any" type="Node3D"]
-script = ExtResource("1_25fsb")
+[node name="using_plane" type="Node3D"]
+script = ExtResource("1_v8ofy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 3.83803, 3.10496, 0)
@@ -35,7 +35,7 @@ mesh = SubResource("SphereMesh_1bvp3")
 
 [node name="FlyCamera" type="CharacterBody3D" parent="."]
 transform = Transform3D(0.815149, -0.349795, 0.46171, 0, 0.79708, 0.603873, -0.579252, -0.492246, 0.649739, 3.22927, 3.8893, 4.41421)
-script = ExtResource("1_rl65r")
+script = ExtResource("2_p3pvw")
 metadata/_custom_type_script = "uid://cte4jalives85"
 
 [node name="ground" type="CSGBox3D" parent="."]
@@ -44,6 +44,6 @@ visible = false
 material_override = SubResource("StandardMaterial3D_jyhfs")
 size = Vector3(30, 1, 30)
 
-[node name="DragPlaneEquation_Any" type="Node3D" parent="."]
-script = ExtResource("4_ktdj4")
+[node name="DragPlaneEquation" type="Node3D" parent="."]
+script = ExtResource("4_tj0mo")
 metadata/_custom_type_script = "uid://bjg8f7qermd6n"
