@@ -1,8 +1,28 @@
-class_name DrawTool3D
-extends Node3D
-
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-#        DrawTool3D (Godot 4) by Skaruts    (version 16)
+# MIT License
+#
+# Copyright (c) 2021 Skaruts
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+#        DrawTool3D (Godot 4)        (version 18 - WIP)
 #
 #
 #    - Uses MultiMeshes for lines, cones, spheres, cubes...
@@ -34,15 +54,11 @@ extends Node3D
 #    jittery and also deformed, and will disapear when viewed from
 #    certain angles.
 #
-#    NOTE: the 'bulk_*' functions require that the arrays provided to them
-#    contain all the arguments that you'd pass to the original drawing
-#    functions, including optional arguments.
-#
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #   TODO:
 #
 #   - dynamically adjusting the 'instance_count' no longer works in Godot 4.3+
-#     or so, because changing that value now resets the internal buffers.
+#     or so, because changing that value now clears the internal buffers.
 #     . this sucks smelly shriveled balls...
 #     . need to set a high-enough 'instance_count' by default, for now
 #     . will need to cache all the lines or something, which will probably
@@ -54,7 +70,7 @@ extends Node3D
 #   - figure out how to create cylinders through code (and cones), in order
 #     to create naturaly a rotated cylinder that can work properly.
 #
-#	- allow changing settings after adding as child
+#	- allow changing settings after adding as child?
 #
 #   - find out if long lines fail due to some bug in here
 #
@@ -95,51 +111,114 @@ extends Node3D
 #
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
+class_name DrawTool3D
+extends Node3D
+
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
 # 		User settings (change BEFORE adding as child)
+#       I'm not sure what happens if you change these in the inspector (not tested).
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-var see_through_geometry := false  # TODO: rename this
+#@export_subgroup("Settings")
+## If true, a second pass material will makes visible lines behind world geometry
+## using the [param backline_color] color.
+@export var see_through_geometry := false
 
-var render_priority := 0  # base render_priority for the materials
-var single_color := false
-var use_only_thin_lines := false
-var cast_shadows := GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+## The render priority for the materials. You can adjust this if you need
+## to control the order in which multiple [DrawTool3D]s are drawn.
+@export var render_priority     := 0  # base render_priority for the materials
 
-var line_thickness := 1.0
-var unshaded       := true    # actually looks great shaded, except for the cylinder caps
-var on_top         := false
-var no_shadows     := true
-var transparent    := false
-var double_sided   := false
+## Use only a single color for all lines (and another single color for backlines,
+## if applicable), instead of a color per line. If this is true, then colors
+## passed into the drawing functions will be ignored.
+@export var single_color        := false
 
-# how thin must the unit-cube be in order to properly represent a line
-# of thickness 1. Lines will look too thick or too thin from too close
-# or too afar, so this must be tweaked according to the intended usage.
-var width_factor := 0.01
+## If true, the [DrawTool3D] will only use the fallback lines,
+## with 1px thickness (using an ImmediateMesh).
+@export var use_only_thin_lines := false
 
-# how many instances to add to the MultiMeshInstance when the pool is full
-var instance_increment            := 64
-var instance_amount               := 64
+## The default line_thickness. This will be used when no thickness value is
+## passed into the drawing functions.
+@export var line_thickness := 1.0
 
-var sphere_radial_segments        := 24
-var sphere_rings                  := 12
-var hollow_sphere_radial_segments := 8
-var hollow_sphere_rings           := 6
-var circle_segments               := 32
+## How thin must the unit-cube be in order to properly represent a line
+## of thickness 1. Depending on this value, Lines may look too thin from afar
+## or too thick from close up, so this must be tweaked according to the
+## intended usage.
+@export var width_factor := 0.01
+
+## How many instances to add to the [MultiMeshInstance] when the pool is full.
+## [br][br]
+## [b]NOTE:[/b] this stopped working somwhere between Godot 4.2 and 4.4, as
+## changing the [param MultiMeshInstance.instance_count] now also clears the internal
+## mesh buffers, so this feature can't be used.
+#@export var instance_increment := 64
+
+## The initial amount of instances in the [MultiMeshInstance3D]
+## [br][br]
+## [b]NOTE:[/b]: since the latest Godot 4.x, this tool can no longer grow
+## the instance counts dynamically, as changing the
+## [param instance_count] on the [b]MultiMeshInstance[/b] now clears its internal mesh buffers.
+## So for now, you need to set a high-enough [param instance_amount] and rely
+## solely only on that.
+@export var instance_amount := 64
+
+
+@export_subgroup("Materials")
+
+## The shading mode. If true, the materials will be fullbright.
+@export var unshaded       := true
+## If true, the materials will cast no shadows.
+@export var no_shadows     := true # for materials  (TODO: there should be only one option for this)
+
+## If true, lines/faces will be seen through the world geometry.
+@export var on_top         := false  # no depth test
+
+## Whether transparency is active or not.
+@export var transparent    := false
+
+## If true, faces will be double sided. This doesn't affect lines.
+@export var double_sided   := false  # for the faces
+
+
+@export_subgroup("Geometry")
+## The amount of radial segments used to create filled spheres.
+@export var sphere_radial_segments        := 24
+## The amount of rings used to create filled spheres.
+@export var sphere_rings                  := 12
+## The amount of rings used to create hollow spheres.
+@export var hollow_sphere_radial_segments := 8
+## The amount of rings used to create hollow spheres.
+@export var hollow_sphere_rings           := 6
+## The amount of segments used to create circles.
+@export var circle_segments               := 32
+
+## The amount of segments used to create the cylinders that make up the lines.
 var cylinder_radial_segments      := 5
 
-var line_color     := Color.WHITE
-var backline_color := Color.WHITE.darkened(darken_factor)
-var face_color     := line_color
-var backface_color := backline_color
+@export_subgroup("Colors")
+## The default color used to make lines. [br][br]Can be overriden in the drawing
+## functions, unless [param use_single_color] is true.
+@export var line_color     := Color.WHITE
 
-var back_alpha := 0.1
-var face_alpha := 0.5
-var darken_factor := 0.5
+## The default color used to make faces.
+@export var face_color     := Color.WHITE
 
+## The default color used to make the backlines. (The lines that are seen
+## through world geometry when [param see_through_geometry] is true.)
+## [br][br]Can be overriden in the drawing functions, unless [param use_single_color] is true.
+@export var backline_color := Color.BLACK
+
+## The default color used to make the backfaces. (The faces that are seen
+## through world geometry when [param see_through_geometry] is true.)
+@export var backface_color := Color.BLACK
+
+
+#@export var back_alpha := 0.1
+#@export var face_alpha := 0.5
+#@export var darken_factor := 0.5
 
 
 
@@ -152,7 +231,7 @@ var darken_factor := 0.5
 enum {A,B,C,D,E,F,G,H}
 
 const _DOT_THRESHOLD := 0.999
-const _USE_CYLINDERS_FOR_LINES := false  # keep this false, my cylinders code is not working in Godot 4
+const _USE_CYLINDERS_FOR_LINES := false  # keep this false, the cylinders code is not working in Godot 4
 
 var _multi_meshes      : Dictionary                # MultiMeshes
 var _im_faces          : ImmediateMesh
@@ -172,11 +251,6 @@ var _im_faces_fore_mat : StandardMaterial3D
 func _ready() -> void:
 	name = "DrawTool3D"
 
-	backline_color = line_color.darkened(darken_factor) # Color(line_color, back_alpha)
-
-	face_color     = line_color.darkened(darken_factor) # Color(line_color, face_alpha)
-	backface_color = backline_color.darkened(darken_factor) # Color(face_color, back_alpha)
-
 	_labels_root = Node3D.new()
 	add_child(_labels_root)
 	_labels_root.name = "3d_labels"
@@ -186,7 +260,7 @@ func _ready() -> void:
 
 	_im_fallback_lines = ImmediateMesh.new()
 	var mi := MeshInstance3D.new()
-	mi.name = "BackLines_MeshInstance3D"
+	mi.name = "Fallback_Lines_MeshInstance3D"
 	mi.mesh = _im_fallback_lines
 	mi.material_override = _back_mat
 	add_child(mi)
@@ -262,7 +336,7 @@ func _create_material(color:Color) -> StandardMaterial3D:
 	return mat
 
 
-# this is the one used for lines, as cylinders
+# this is the one used for lines as cylinders
 func _init_line_mesh__cylinder(mat:StandardMaterial3D) -> MultiMesh:
 	var cylinder := CylinderMesh.new()
 	cylinder.top_radius = width_factor
@@ -277,7 +351,7 @@ func _init_line_mesh__cylinder(mat:StandardMaterial3D) -> MultiMesh:
 	return _create_multimesh(cylinder, "Cylinders_MultiMeshInstance3D")
 
 
-# this is the one used for lines, as cubes
+# this is the one used for lines as cubes
 func _init_line_mesh__cube(mat:StandardMaterial3D) -> MultiMesh:
 	var cube := BoxMesh.new()
 	cube.size = Vector3(width_factor, width_factor, 1)
@@ -302,7 +376,6 @@ func _init_cube_mesh(mat:StandardMaterial3D) -> MultiMesh:
 func _init_cone_mesh(mat:StandardMaterial3D) -> MultiMesh:
 	# ----------------------------------------
 	# create cones (for vectors)
-	@warning_ignore("shadowed_variable")
 	var cone := CylinderMesh.new()
 	cone.top_radius = 0
 	cone.bottom_radius = width_factor
@@ -317,7 +390,6 @@ func _init_cone_mesh(mat:StandardMaterial3D) -> MultiMesh:
 func _init_sphere_mesh(mat:StandardMaterial3D) -> MultiMesh:
 	# ----------------------------------------
 	# create spheres
-	@warning_ignore("shadowed_variable")
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.5
 	sphere.height = 1
@@ -342,9 +414,10 @@ func _create_multimesh(mesh:Mesh, name:String) -> MultiMesh:
 	mmi.name = name
 	mmi.multimesh = mm
 
-	# for some reason only the setter function works
-	#mmi.set("cast_shadows", 0 as GeometryInstance3D.ShadowCastingSetting)
-	#mmi.cast_shadows = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var cast_shadows := GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if no_shadows else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	# for some reason only the setter function seems to work (last I checked)
+	#mmi.set("cast_shadows", cast_shadows as GeometryInstance3D.ShadowCastingSetting)
+	#mmi.cast_shadows = cast_shadows
 	mmi.set_cast_shadows_setting(cast_shadows)
 
 	add_child(mmi)
@@ -378,13 +451,11 @@ func _create_circle_points(position:Vector3, axis:Vector3, num_segments:int, sta
 	var points := []
 	var cross := axis.cross(_cross_axis).normalized()
 
-	# this was intended for some edge cases, but it seems like it never happens
+	# this was intended for some edge cases, but seems like the condition is never true
 	var dot :float = abs(cross.dot(axis))
 	if dot > 0.9:
-		printerr(_create_circle_points, ": THIS CODE HAS RUN!") # seems like this code never runs
+		printerr(_create_circle_points, ": THIS CODE IS RUNNING!")
 		cross = axis.cross(Vector3.UP) * radius
-
-#	print(axis, cross, dot)
 
 	# draw a debug cross-product vector
 	#draw_line(position, position+cross, Color.PURPLE, 2)
@@ -418,13 +489,12 @@ func _create_arc_points(pos:Vector3, axis:Vector3, arc_angle:float, num_segments
 	var points := []
 	var cross := axis.cross(_cross_axis).normalized()# *  radius
 
-	# this was intended for some edge cases, but it seems like it never happens
+	# this was intended for some edge cases, but seems like the condition is never true
 	var dot :float = abs(cross.dot(axis))
 	if dot > 0.9:
-		printerr(_create_arc_points, ": THIS CODE HAS RUN!") # seems like this code never runs
+		printerr(_create_arc_points, ": THIS CODE IS RUNNING!")
 		cross = axis.cross(Vector3.UP) * radius
 
-#	print(axis, cross, dot)
 
 	# draw a debug cross-product vector
 	#draw_line(pos, pos+cross, Color.PURPLE, 2)
@@ -447,7 +517,6 @@ func _create_arc_points(pos:Vector3, axis:Vector3, arc_angle:float, num_segments
 	return points
 
 
-@warning_ignore("shadowed_variable_base_class")
 func _create_circle_points_OLD(pos:Vector3, radius:Vector3, axis:Vector3) -> Array:
 	var points := []
 
@@ -458,9 +527,8 @@ func _create_circle_points_OLD(pos:Vector3, radius:Vector3, axis:Vector3) -> Arr
 	return points
 
 
-# http://kidscancode.org/godot_recipes/3.x/3d/3d_align_surface/
-@warning_ignore("shadowed_variable_base_class")
-# 'tr' is actually a an Object method? -- WTF?!?!?
+# Reference used:  http://kidscancode.org/godot_recipes/3.x/3d/3d_align_surface/
+@warning_ignore("shadowed_variable_base_class") # 'tr' is actually an Object method!! WTF...!?
 func align_with_y(tr:Transform3D, new_y:Vector3) -> Transform3D:
 	if new_y.dot(Vector3.FORWARD) in [-1, 1]:
 #		new_y = Vector3.RIGHT
@@ -667,10 +735,6 @@ func _add_sphere_hollow(pos:Vector3, color:Color, diameter:=1.0, thickness:=1.0)
 		draw_polyline(points, color, thickness)
 
 
-
-
-
-
 func _add_sphere_hollow2(pos:Vector3, color:Color, diameter:=1.0, thickness:=1.0) -> void:
 	var radius := diameter/2.0
 	var meridian_points := _create_circle_points(pos, Vector3.RIGHT*radius, hollow_sphere_rings*2, 90)
@@ -681,9 +745,6 @@ func _add_sphere_hollow2(pos:Vector3, color:Color, diameter:=1.0, thickness:=1.0
 
 	var p1 := pos - Vector3.UP*radius
 
-	#var polylines := []
-
-	#var dist := (diameter)/float(hollow_sphere_rings)
 	for i in range(1, meridian_points.size()):
 		var mp:Vector3 = meridian_points[i]
 		var r:float = absf(mp.z-p1.z)
@@ -691,8 +752,6 @@ func _add_sphere_hollow2(pos:Vector3, color:Color, diameter:=1.0, thickness:=1.0
 		var points := _create_arc_points(p, Vector3.UP*r, 360, hollow_sphere_radial_segments, 90)
 		__add_back_line_poly(points, color)
 		draw_polyline(points, color, thickness)
-		#polylines.append([points, color, thickness])
-
 
 	for i in hollow_sphere_radial_segments:
 		var angle := 360.0/hollow_sphere_radial_segments
@@ -700,20 +759,9 @@ func _add_sphere_hollow2(pos:Vector3, color:Color, diameter:=1.0, thickness:=1.0
 		var points := _create_arc_points(pos, direction*radius, 180, hollow_sphere_rings, 90)
 		__add_back_line_poly(points, color)
 		draw_polyline(points, color, thickness)
-		#polylines.append([points, color, thickness])
-
-	#bulk_polylines(polylines)
 
 
-#               010           110                         Y
-#   Vertices     A0 ---------- B1            Faces      Top    -Z
-#           011 /  |      111 /  |                        |   North
-#             E4 ---------- F5   |                        | /
-#             |    |        |    |          -X West ----- 0 ----- East X
-#             |   D3 -------|-- C2                      / |
-#             |  /  000     |  / 100               South  |
-#             H7 ---------- G6                      Z    Bottom
-#              001           101                          -Y
+
 func _add_cube(pos:Vector3, size:float, color:Color) -> void:
 	#var p1 := pos
 	#var p2 := p1+size
@@ -733,7 +781,6 @@ func _add_cube(pos:Vector3, size:float, color:Color) -> void:
 	draw_quad([e,f,g,h], color)  # South
 	draw_quad([a,b,f,e], color)  # Top
 	draw_quad([h,g,c,d], color)  # Bottom
-
 
 
 func _add_fast_cube(pos:Vector3, size:Vector3, color:Color) -> void:
@@ -804,13 +851,15 @@ func clear() -> void:
 	_im_fallback_lines.clear_surfaces()
 
 
-func draw_line(a:Vector3, b:Vector3, color:Color, thickness:=line_thickness) -> void:
+func draw_line(a:Vector3, b:Vector3, color:Color=line_color, thickness:=line_thickness) -> void:
 	_add_line(a, b, color, thickness)
 
-func draw_lines(lines: PackedVector3Array, color: Color, thickness:= line_thickness) -> void:
+
+func draw_lines(lines: PackedVector3Array, color: Color=line_color, thickness:= line_thickness) -> void:
 	assert(lines.size() % 2 == 0) # vertices must be even number
 	for i in range(0, lines.size(), 2):
 		_add_line(lines[i], lines[i+1], color, thickness)
+
 
 # points = contiguous Array[Vector3]
 func draw_polyline(points:Array, color:=line_color, thickness:=line_thickness) -> void:
@@ -926,8 +975,6 @@ func draw_aabb(_aabb:AABB, color:Color, thickness:=line_thickness, draw_faces:=f
 		draw_cube_faces(p1, size, color)
 
 
-
-
 # vertices should match the ordering specified in the reference
 # at the top of this file
 func draw_rectangle_verts(vertices: PackedVector3Array, color:Color, thickness:=line_thickness, _draw_faces:=false, _face_color:Variant=null) -> void:
@@ -974,38 +1021,22 @@ func draw_rectangle(p1: Vector3, p2: Vector3, color:Color, thickness:=line_thick
 	_add_line(d, h, color, thickness)
 
 
-
 # useful for drawing vectors as arrows, for example
 @warning_ignore("shadowed_variable_base_class")
 func draw_cone(position:Vector3, direction:Vector3, color:Color, thickness:=1.0) -> void:
 	_add_cone(position, direction, color, thickness)
 
 
-
 @warning_ignore("shadowed_variable_base_class")
 func draw_sphere(position:Vector3, color:Color, size:=1.0, filled:=true, thickness:=1.0) -> void:
-	if filled:
-		_add_sphere_filled(position, color, size)
-	else:
-		_add_sphere_hollow(position, color, size, thickness)
-
-
-# points = contiguous Array[Vector3]
-func batch_pheres(points:Array, colors:Variant, size:=1.0, filled:=true) -> void:
-	if colors is Color:
-		for p:Vector3 in points:
-			draw_sphere(p, colors, size, filled)
-	elif colors is Array[Color]:
-		for i:int in points.size():
-			draw_sphere(points[i], colors[i], size, filled)
-
+	if filled: _add_sphere_filled(position, color, size)
+	else:      _add_sphere_hollow(position, color, size, thickness)
 
 
 @warning_ignore("shadowed_variable_base_class")
 func draw_circle(position:Vector3, normal:Vector3, color:Color, thickness:=1.0, num_segments:=circle_segments) -> void:
 	var points := _create_circle_points(position, normal, num_segments)
 	draw_polyline(points, color, thickness)
-
 
 
 @warning_ignore("shadowed_variable_base_class")
